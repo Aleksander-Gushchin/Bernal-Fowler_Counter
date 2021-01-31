@@ -3,8 +3,7 @@
 
 int main() {
 
-  T a;
-  a.add();
+  Graph g;
 
   return 0;
 }
