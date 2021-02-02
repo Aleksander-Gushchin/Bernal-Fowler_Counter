@@ -5,10 +5,11 @@
 
 class Graph {
 private:
-  uint64_t bitfield;
+  uint32_t bitfield;
 public:
   Graph();
-  void set(int32_t i);
-  bool get(int32_t i);
+  Graph(uint32_t i);
+  void set(uint32_t i);
+  uint32_t get();
   Graph operator*(const Permutation & p);
 };

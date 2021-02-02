@@ -3,24 +3,29 @@
 
 Graph::Graph() : bitfield(0) {}
 
-void Graph::set(int32_t i)
+Graph::Graph(uint32_t i) : bitfield(i) {}
+
+void Graph::set(uint32_t i)
 {
   if (i < 0)
     throw;
 
-  bitfield |= 1 << i;
+  bitfield |= i;
 }
 
-bool Graph::get(int32_t i)
+uint32_t Graph::get()
 {
-  if (i < 0)
-    throw;
-
-  return bitfield & i << i;
+  return bitfield;
 }
 
 Graph Graph::operator*(const Permutation& p)
 {
-    return Graph();
+  uint32_t res;
+
+  for (int i = 0; i < 32; ++i) {
+    res |= bitfield & 1 << i;
+  }
+
+  return Graph(res);
 }
 

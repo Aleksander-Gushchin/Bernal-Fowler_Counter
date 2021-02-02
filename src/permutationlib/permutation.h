@@ -5,7 +5,12 @@
 
 class Permutation {
 private:
-  std::vector<uint8_t> perm;
+  uint8_t perm[32];
 public:
   Permutation();
+  Permutation(std::vector<uint8_t> _perm);
+  Permutation(uint8_t _perm[32]);
+  Permutation operator*(const Permutation& p);
+  uint8_t & operator[](int32_t i);
+  const uint8_t& operator[](int32_t i) const;
 };
