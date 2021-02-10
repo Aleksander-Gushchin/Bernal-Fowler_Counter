@@ -23,7 +23,7 @@ Graph Graph::operator*(const Permutation& p)
   uint32_t res;
 
   for (int i = 0; i < 32; ++i) {
-    res |= bitfield & 1 << i;
+    res |= ((bitfield & 1 << i) >> i) << p[i];
   }
 
   return Graph(res);
