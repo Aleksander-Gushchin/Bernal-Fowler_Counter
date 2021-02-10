@@ -43,6 +43,25 @@ Permutation Permutation::operator*(const Permutation& p)
   return Permutation(res);
 }
 
+Permutation& Permutation::operator=(const Permutation& p)
+{
+
+  for (int i = 0; i < 32; ++i)
+    this->perm[i] = p[i];
+
+#ifdef __TEST
+  std::vector<uint8_t> a;
+  for (int i = 0; i < 32; ++i)
+    a.push_back(this->perm[i]);
+  sort(a.begin(), a.end());
+  for (int i = 0; i < 31; ++i)
+    if (a[i] != a[i + 1] - 1)
+      throw;
+#endif // __TEST
+
+  return *this;
+}
+
 uint8_t & Permutation::operator[](const int32_t i)
 {
   if (i < 0 || i > 31)

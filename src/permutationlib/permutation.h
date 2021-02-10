@@ -11,6 +11,7 @@ public:
   Permutation(std::vector<uint8_t> _perm);
   Permutation(uint8_t _perm[32]);
   Permutation operator*(const Permutation& p);
+  Permutation& operator=(const Permutation& p);
   uint8_t & operator[](int32_t i);
   const uint8_t& operator[](int32_t i) const;
 };
