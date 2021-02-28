@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.9 )
 
-project(Main)
+project(main)
 
-add_executable(Main main.cpp)
-target_link_libraries(Main ${graphlib} ${permutationlib})
+add_executable(main main.cpp)
+target_link_libraries(main ${graphlib} ${permutationlib})

@@ -18,7 +18,7 @@ Permutation::Permutation(std::vector<uint8_t> _perm)
   std::vector<uint8_t> a(_perm);
   sort(a.begin(), a.end());
   for (int i = 0; i < 31; ++i)
-    if (a[i] != a[i + 1] - 1)
+    if (a[i] != i)
       throw;
 #endif // __TEST
 
@@ -38,7 +38,7 @@ Permutation Permutation::operator*(const Permutation& p)
   uint8_t res[32];
 
   for (int i = 0; i < 32; ++i)
-    res[i] = p[(perm[i])];
+    res[i] = perm[(p[i])];
 
   return Permutation(res);
 }
@@ -55,7 +55,7 @@ Permutation& Permutation::operator=(const Permutation& p)
     a.push_back(this->perm[i]);
   sort(a.begin(), a.end());
   for (int i = 0; i < 31; ++i)
-    if (a[i] != a[i + 1] - 1)
+    if (a[i] != i)
       throw;
 #endif // __TEST
 

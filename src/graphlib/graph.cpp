@@ -10,7 +10,7 @@ void Graph::set(uint32_t i)
   if (i < 0)
     throw;
 
-  bitfield |= i;
+  bitfield |= 1 << i;
 }
 
 uint32_t Graph::get()

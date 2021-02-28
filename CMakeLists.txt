@@ -4,6 +4,10 @@ project(OrgraphCount)
 
 set(graphlib graphlib)
 set(permutationlib permutationlib)
+set(orgtest orgtest)
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/gtest")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/gtest")
 
 file(GLOB SUBLIBS "${CMAKE_CURRENT_SOURCE_DIR}/src/*lib")
 
@@ -14,3 +18,7 @@ file(GLOB SUBDIRS "${CMAKE_CURRENT_SOURCE_DIR}/src/*")
 foreach(subdir ${SUBDIRS})
   add_subdirectory(${subdir})
 endforeach()
+
+
+
+enable_testing()

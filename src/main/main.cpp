@@ -2,13 +2,21 @@
 #include "graph.h"
 
 
+void f(std::vector<uint8_t> & a) {
+  for (auto&& c : a)
+    --c;
+  a[0] = a.size() - 1;
+}
+
+void la(const int& a) {
+  
+}
 
 
 int main() {
 
-  Graph g;
+  Graph g(0xFF);
 
-  g.set(0xF1F);
 
 
   std::vector<uint8_t> test = {
@@ -16,8 +24,6 @@ int main() {
     8, 9, 10, 11, 12, 13, 14, 15, // 8 - 15
     16, 17, 18, 19, 20, 21, 22, 23, // 16 - 23
     24, 25, 26, 27, 28, 29, 30, 31}; // 24 - 32
-
-  
 
   Permutation a(test);
 
