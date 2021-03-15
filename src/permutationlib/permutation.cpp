@@ -5,30 +5,25 @@
 
 Permutation::Permutation()
 {
+  reverse = 0;
   for (int i = 0; i < 32; ++i)
     perm[i] = i;
 }
 
-Permutation::Permutation(std::vector<uint8_t> _perm)
+Permutation::Permutation(std::vector<uint8_t> _perm, uint32_t reverse_bf)
 {
   if (_perm.size() != 32)
     throw;
 
-#ifdef __TEST
-  std::vector<uint8_t> a(_perm);
-  sort(a.begin(), a.end());
-  for (int i = 0; i < 31; ++i)
-    if (a[i] != i)
-      throw;
-#endif // __TEST
-
+  reverse = reverse_bf;
   for (int i = 0; i < 32; ++i)
     perm[i] = _perm[i];
 
 }
 
-Permutation::Permutation(uint8_t _perm[32])
+Permutation::Permutation(uint8_t _perm[32], uint32_t reverse_bf)
 {
+  reverse = reverse_bf;
   for (int i = 0; i < 32; ++i)
     perm[i] = _perm[i];
 }
@@ -36,31 +31,37 @@ Permutation::Permutation(uint8_t _perm[32])
 Permutation Permutation::operator*(const Permutation& p)
 {
   uint8_t res[32];
+  uint32_t reverse_res = 0;
 
-  for (int i = 0; i < 32; ++i)
-    res[i] = perm[(p[i])];
-
-  return Permutation(res);
+  for (int i = 0; i < 32; ++i) {
+    uint32_t index = p.perm[i];
+    reverse_res = (p.reverse & (1 << i)) ^ (reverse & (1 << index));
+    res[i] = perm[index];
+  }
+  return Permutation(res, reverse_res);
 }
 
 Permutation& Permutation::operator=(const Permutation& p)
 {
-
+  reverse = p.reverse;
   for (int i = 0; i < 32; ++i)
-    this->perm[i] = p[i];
-
-#ifdef __TEST
-  std::vector<uint8_t> a;
-  for (int i = 0; i < 32; ++i)
-    a.push_back(this->perm[i]);
-  sort(a.begin(), a.end());
-  for (int i = 0; i < 31; ++i)
-    if (a[i] != i)
-      throw;
-#endif // __TEST
+    perm[i] = p.perm[i];
 
   return *this;
 }
+
+bool Permutation::operator==(const Permutation& p)
+{
+  if (reverse != p.reverse)
+    return false;
+
+  for (int i = 0; i < 32; i++)
+    if (perm[i] != p.perm[i])
+      return false;
+  
+  return true;
+}
+
 
 uint8_t & Permutation::operator[](const int32_t i)
 {
