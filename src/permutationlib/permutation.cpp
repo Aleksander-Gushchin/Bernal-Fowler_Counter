@@ -35,7 +35,10 @@ Permutation Permutation::operator*(const Permutation& p)
 
   for (int i = 0; i < 32; ++i) {
     uint32_t index = p.perm[i];
-    reverse_res = (p.reverse & (1 << i)) ^ (reverse & (1 << index));
+    reverse_res |= 
+      (((p.reverse & (1 << i)) >> i) ^ // from operand
+      ((reverse & (1 << index)) >> index)) // from source
+      << i;
     res[i] = perm[index];
   }
   return Permutation(res, reverse_res);

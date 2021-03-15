@@ -61,3 +61,33 @@ TEST(permutation, basic_mult) {
 
   EXPECT_EQ(true, isCorrect);
 }
+
+TEST(permutation, comp_mult_1) {
+  std::vector<uint8_t> vec1 = {
+    0, 2, 1, 3, 5, 4, 6, 7, // 0 - 7
+    8, 9, 10, 11, 12, 13, 14, 15, // 8 - 15
+    16, 17, 18, 19, 20, 21, 22, 23, // 16 - 23
+    24, 25, 26, 27, 28, 29, 30, 31 }; // 24 - 32
+
+  std::vector<uint8_t> vec2 = {
+    0, 3, 2, 1, 4, 5, 6, 7, // 0 - 7
+    8, 9, 10, 11, 12, 13, 14, 15, // 8 - 15
+    16, 17, 18, 19, 20, 21, 22, 23, // 16 - 23
+    24, 25, 26, 27, 28, 29, 30, 31 }; // 24 - 32
+
+  Permutation A(vec1, 0x8);
+  Permutation B(vec2, 0xC);
+
+  std::vector<uint8_t> vec3 = {
+    0, 3, 1, 2, 5, 4, 6, 7, // 0 - 7
+    8, 9, 10, 11, 12, 13, 14, 15, // 8 - 15
+    16, 17, 18, 19, 20, 21, 22, 23, // 16 - 23
+    24, 25, 26, 27, 28, 29, 30, 31 }; // 24 - 32
+
+  Permutation act = A * B;
+  Permutation exp(vec3, 0xE);
+
+  bool isCorrect = exp == act;
+
+  EXPECT_EQ(true, isCorrect);
+}
