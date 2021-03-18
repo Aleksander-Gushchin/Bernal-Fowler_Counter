@@ -5,60 +5,39 @@
 
 Permutation::Permutation()
 {
-  reverse = 0;
-  for (int i = 0; i < 32; ++i)
-    perm[i] = i;
 }
 
-Permutation::Permutation(std::vector<uint8_t> _perm, uint32_t reverse_bf)
+Permutation::Permutation(const std::vector<int16_t> & _perm)
 {
-  if (_perm.size() != 32)
-    throw;
-
-  reverse = reverse_bf;
-  for (int i = 0; i < 32; ++i)
-    perm[i] = _perm[i];
-
-}
-
-Permutation::Permutation(uint8_t _perm[32], uint32_t reverse_bf)
-{
-  reverse = reverse_bf;
-  for (int i = 0; i < 32; ++i)
-    perm[i] = _perm[i];
+  perm = _perm;
 }
 
 Permutation Permutation::operator*(const Permutation& p)
 {
-  uint8_t res[32];
-  uint32_t reverse_res = 0;
+  if (perm.size() != p.perm.size())
+    throw;
 
-  for (int i = 0; i < 32; ++i) {
-    uint32_t index = p.perm[i];
-    reverse_res |= 
-      (((p.reverse & (1 << i)) >> i) ^ // from operand
-      ((reverse & (1 << index)) >> index)) // from source
-      << i;
-    res[i] = perm[index];
+  std::vector<int16_t> res(perm.size());
+
+  for (int i = 0; i < perm.size(); ++i) {
+    int sign = (p.perm[i] % 2 + (p.perm[i] + 1) % 2);
+    res[i] = sign * perm[std::abs(p.perm[i])];
   }
-  return Permutation(res, reverse_res);
+  return Permutation(res);
 }
 
 Permutation& Permutation::operator=(const Permutation& p)
 {
-  reverse = p.reverse;
-  for (int i = 0; i < 32; ++i)
-    perm[i] = p.perm[i];
-
+  perm = p.perm;
   return *this;
 }
 
 bool Permutation::operator==(const Permutation& p)
 {
-  if (reverse != p.reverse)
+  if (p.perm.size() != perm.size())
     return false;
 
-  for (int i = 0; i < 32; i++)
+  for (int i = 0; i < perm.size(); i++)
     if (perm[i] != p.perm[i])
       return false;
   
@@ -66,18 +45,12 @@ bool Permutation::operator==(const Permutation& p)
 }
 
 
-uint8_t & Permutation::operator[](const int32_t i)
+int16_t & Permutation::operator[](const int32_t i)
 {
-  if (i < 0 || i > 31)
-    throw;
-
   return perm[i];
 }
 
-const uint8_t& Permutation::operator[](int32_t i) const
+const int16_t& Permutation::operator[](int32_t i) const
 {
-  if (i < 0 || i > 31)
-    throw;
-
   return perm[i];
 }
