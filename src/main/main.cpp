@@ -29,8 +29,8 @@ int main() {
       counter++;
     }
   }
-
-
+  char mm = -0 == 0 ? '1' : '2';
+  std::cout << mm << "\n";
   std::cout << counter;
   return 0;
 }

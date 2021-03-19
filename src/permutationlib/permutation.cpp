@@ -21,7 +21,7 @@ Permutation Permutation::operator*(const Permutation& p)
 
   for (int i = 0; i < perm.size(); ++i) {
     int sign = (p.perm[i] % 2 + (p.perm[i] + 1) % 2);
-    res[i] = sign * perm[std::abs(p.perm[i])];
+    res[i] = sign * perm[std::abs(p.perm[i]) - 1];
   }
   return Permutation(res);
 }
