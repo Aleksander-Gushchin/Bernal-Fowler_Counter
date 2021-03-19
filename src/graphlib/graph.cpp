@@ -28,7 +28,7 @@ Graph Graph::operator*(const Permutation& p){
 
 }
 
-bool Graph::get(uint32_t)
+std::vector<bool>::reference Graph::operator[](uint32_t i)
 {
   return bitfield[i];
 }
