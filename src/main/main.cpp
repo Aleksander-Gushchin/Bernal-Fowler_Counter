@@ -14,20 +14,13 @@ int main() {
 
     bool isBernaul = true;
 
-    if (X[0] + !X[1] + X[5] + X[6] != 2)
+    if (X[0] + !X[1] + X[5] + X[6] != 2
+      || X[1] + !X[2] + X[7] + X[8] != 2
+      || X[2] + !X[3] + X[9] + X[10] != 2
+      || X[3] + !X[4] + X[11] + X[12] != 2
+      || X[4] + !X[0] + X[13] + X[14] != 2)
       isBernaul = false;
 
-    if (X[1] + !X[2] + X[7] + X[8] != 2)
-      isBernaul = false;
-
-    if (X[2] + !X[3] + X[9] + X[10] != 2)
-      isBernaul = false;
-
-    if (X[3] + !X[4] + X[11] + X[12] != 2)
-      isBernaul = false;
-
-    if (X[4] + !X[0] + X[13] + X[14] != 2)
-      isBernaul = false;
 
     if (isBernaul == true) {
       for (auto c : X)

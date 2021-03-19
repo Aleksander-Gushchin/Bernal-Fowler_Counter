@@ -18,5 +18,5 @@ public:
   int16_t & operator[](int32_t i);
   const int16_t& operator[](int32_t i) const;
 
-  
+  const uint32_t get_size() const;
 };

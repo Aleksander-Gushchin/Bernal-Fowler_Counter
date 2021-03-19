@@ -54,3 +54,8 @@ const int16_t& Permutation::operator[](int32_t i) const
 {
   return perm[i];
 }
+
+const uint32_t Permutation::get_size() const
+{
+  return perm.size();
+}
