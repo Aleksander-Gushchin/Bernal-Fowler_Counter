@@ -1,31 +1,37 @@
 #include "graph.h"
 
 
-Graph::Graph() : bitfield(0) {}
+Graph::Graph(){}
 
-Graph::Graph(uint32_t i) : bitfield(i) {}
+Graph::Graph(uint32_t b_field, uint8_t size){
+  int real_size = size < 32 ? size : 32;
+  bitfield = std::vector <bool>(real_size);
+  for (int i = 0; i < real_size; ++i)
+    bitfield[i] = (b_field & 1 << i) >> i;
+}
 
-void Graph::set(uint32_t i)
-{
-  if (i < 0)
+Graph::Graph(const std::vector<bool>& vec){
+  bitfield = vec;
+}
+
+Graph Graph::operator*(const Permutation& p){
+  if (p.get_size() != bitfield.size())
     throw;
 
-  bitfield |= 1 << i;
-}
+  std::vector<bool> res(bitfield.size());
 
-uint32_t Graph::get()
-{
-  return bitfield;
-}
-
-Graph Graph::operator*(const Permutation& p)
-{
-  uint32_t res;
-
-  for (int i = 0; i < 32; ++i) {
-    res |= ((bitfield & 1 << i) >> i) << p[i];
+  for (int i = 0; i < bitfield.size(); ++i) {
+    int index = p[i];
+    int sign = (index % 2 + (index + 1) % 2);
+    res[i] = sign ^ bitfield[std::abs(index)];
   }
 
-  return Graph(res);
 }
+
+std::vector<bool>::reference Graph::operator[](uint32_t i)
+{
+  return bitfield[i];
+}
+
+
 

@@ -7,7 +7,13 @@ TEST(graph, basic_init) {
 }
 
 TEST(graph, set) {
-  Graph a(0xEF);
-  a.set(4);
-  EXPECT_EQ(a.get(), 0xFF);
+  Graph a(0xFF);
+  EXPECT_EQ(a[1], true);
 }
+
+TEST(graph, get) {
+  Graph a(0xFF);
+  a[1] = false;
+  EXPECT_EQ(a[1], false);
+}
+

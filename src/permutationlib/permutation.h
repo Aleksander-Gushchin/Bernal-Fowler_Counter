@@ -5,19 +5,18 @@
 
 class Permutation {
 private:
-  uint8_t perm[32];
-  uint32_t reverse;
+  std::vector<int16_t> perm;
 public:
   Permutation();
-  Permutation(std::vector<uint8_t> _perm, uint32_t reverse_bf);
-  Permutation(uint8_t _perm[32], uint32_t reverse_bf);
-
+  Permutation(const std::vector<int16_t>& _perm);
   
   Permutation operator*(const Permutation& p);
   Permutation& operator=(const Permutation& p);
 
   bool operator==(const Permutation& p);
 
-  uint8_t & operator[](int32_t i);
-  const uint8_t& operator[](int32_t i) const;
+  int16_t & operator[](int32_t i);
+  const int16_t& operator[](int32_t i) const;
+
+  const uint32_t get_size() const;
 };

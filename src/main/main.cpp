@@ -2,34 +2,35 @@
 #include "graph.h"
 
 
-void f(std::vector<uint8_t> & a) {
-  for (auto&& c : a)
-    --c;
-  a[0] = a.size() - 1;
-}
-
-void la(const int& a) {
-  
-}
-
 
 int main() {
 
-  Graph g(0xFF);
+  int counter = 0;
+
+  for (uint32_t b_i = 0; b_i < 32767; ++b_i) {
+    std::vector<bool> X(15, 0);
+    for (int i = 0; i < 15; ++i)
+      X[i] = (b_i & 1 << i) >> i;
+
+    bool isBernaul = true;
+
+    if (X[0] + !X[1] + X[5] + X[6] != 2
+      || X[1] + !X[2] + X[7] + X[8] != 2
+      || X[2] + !X[3] + X[9] + X[10] != 2
+      || X[3] + !X[4] + X[11] + X[12] != 2
+      || X[4] + !X[0] + X[13] + X[14] != 2)
+      isBernaul = false;
 
 
+    if (isBernaul == true) {
+      for (auto c : X)
+        std::cout << c << " ";
+      std::cout << "\n";
+      counter++;
+    }
+  }
 
-  std::vector<uint8_t> test = {
-    0, 1, 2, 3, 4, 5, 6, 7, // 0 - 7
-    8, 9, 10, 11, 12, 13, 14, 15, // 8 - 15
-    16, 17, 18, 19, 20, 21, 22, 23, // 16 - 23
-    24, 25, 26, 27, 28, 29, 30, 31}; // 24 - 32
 
-  Permutation a(test, 0);
-
-  Permutation b;
-  b = a * a;
-
-  std::cout << g.get();
+  std::cout << counter;
   return 0;
 }

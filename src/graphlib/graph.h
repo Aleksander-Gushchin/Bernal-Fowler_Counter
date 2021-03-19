@@ -5,11 +5,13 @@
 
 class Graph {
 private:
-  uint32_t bitfield;
+  std::vector<bool> bitfield;
 public:
   Graph();
-  Graph(uint32_t i);
-  void set(uint32_t i);
-  uint32_t get();
+  Graph(uint32_t b_field, uint8_t size = 32);
+  Graph(const std::vector<bool>& vec);
+
   Graph operator*(const Permutation & p);
+
+  std::vector< bool >::reference operator[](uint32_t i);
 };
