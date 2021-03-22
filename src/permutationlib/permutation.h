@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <ostream>
 
 
 class Permutation {
@@ -19,4 +20,7 @@ public:
   const int16_t& operator[](int32_t i) const;
 
   const uint32_t get_size() const;
+
+
+  friend std::ostream& operator<<(std::ostream& os, Permutation g);
 };

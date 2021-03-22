@@ -1,7 +1,7 @@
 #include <iostream>
 #include "graph.h"
 #include <list>
-
+#include <omp.h>
 
 
 int main() {
@@ -34,7 +34,7 @@ int main() {
   }
 
   Permutation rotate72({
-    5, 1, 2, 3, 4, // f-b points
+    5, 1, 2, 3, 4,
     14, 15, 6, 7, 8, 9, 10, 11, 12, 13
     });
 
@@ -42,10 +42,23 @@ int main() {
   Permutation rotate216 = rotate144 * rotate72;
   Permutation rotate288 = rotate216 * rotate72;
 
+  Permutation flip({
+    -2, -1, -5, -4, -3,
+    7, 6, 15, 14, 13, 12, 11, 10, 9, 8
+    });
 
+  std::cout << flip << "\n";
+  std::cout << rotate72 * flip << "\n";
+  std::cout << rotate144 * flip << "\n";
+  std::cout << rotate216 * flip << "\n";
+  std::cout << rotate288 * flip << "\n";
 
+  auto start = omp_get_wtime();
   for (auto it = graph_list.begin(); it != graph_list.end(); ++it) {
-    std::vector<Graph> rotate = { *it * rotate72, *it * rotate144, *it * rotate216, *it * rotate288 };
+    std::vector<Graph> rotate = { 
+      *it * rotate72, *it * rotate144, *it * rotate216, *it * rotate288, *it * rotate72 * flip,
+      *it * rotate144 * flip, *it * rotate216 * flip, *it * rotate288 * flip, *it*flip };
+
     auto inner_it = it;
     inner_it++;
     for (; inner_it != graph_list.end(); ++inner_it) {
@@ -57,6 +70,8 @@ int main() {
         }
     }
   }
+  auto end = omp_get_wtime();
+  std::cout << "Time: " << end - start << "\n";
 
   std::cout << "All graphs count: " << counter << "\n";
   std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";

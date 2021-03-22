@@ -1,6 +1,7 @@
 #include "permutation.h"
 #include <list>
 #include <algorithm>
+#include <iostream>
 #define __TEST
 
 Permutation::Permutation()
@@ -58,4 +59,11 @@ const int16_t& Permutation::operator[](int32_t i) const
 const uint32_t Permutation::get_size() const
 {
   return perm.size();
+}
+
+std::ostream& operator<<(std::ostream& os, Permutation g)
+{
+  for (auto c : g.perm)
+    std::cout << c << " ";
+  return os;
 }
