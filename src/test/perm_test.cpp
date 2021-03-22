@@ -88,3 +88,25 @@ TEST(permutation, comp_mult_1) {
 
   EXPECT_EQ(true, isCorrect);
 }
+
+TEST(permutation, full_rotate) {
+  std::vector<int16_t> vec1 = {
+    5, 1, 2, 3, 4, // f-b points
+    14, 15, 6, 7, 8, 9, 10, 11, 12, 13
+  };
+
+  
+  std::vector<int16_t> vec2 = {
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+  };
+
+  Permutation rotate(vec1);
+
+  Permutation act = rotate * rotate * rotate * rotate * rotate;
+  Permutation exp(vec2);
+
+  bool isCorrect = exp == act;
+
+  EXPECT_EQ(true, isCorrect);
+}

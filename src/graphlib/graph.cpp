@@ -1,4 +1,5 @@
 #include "graph.h"
+#include <iostream>
 
 
 Graph::Graph(){}
@@ -12,6 +13,11 @@ Graph::Graph(uint32_t b_field, uint8_t size){
 
 Graph::Graph(const std::vector<bool>& vec){
   bitfield = vec;
+}
+
+Graph::Graph(const Graph& g)
+{
+  bitfield = g.bitfield;
 }
 
 Graph& Graph::operator=(const Graph& g)
@@ -64,5 +70,10 @@ std::vector<bool>::reference Graph::operator[](uint32_t i)
   return bitfield[i];
 }
 
+std::ostream& operator<<(std::ostream& os, Graph g)
+{
+  for (auto c : g.bitfield)
+    std::cout << static_cast<int>(c) << " ";
 
-
+  return os;
+}
