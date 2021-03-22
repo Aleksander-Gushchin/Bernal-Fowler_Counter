@@ -38,27 +38,85 @@ int main() {
     14, 15, 6, 7, 8, 9, 10, 11, 12, 13
     });
 
-  Permutation rotate144 = rotate72 * rotate72;
-  Permutation rotate216 = rotate144 * rotate72;
-  Permutation rotate288 = rotate216 * rotate72;
-
   Permutation flip({
     -2, -1, -5, -4, -3,
     7, 6, 15, 14, 13, 12, 11, 10, 9, 8
     });
 
-  std::cout << flip << "\n";
-  std::cout << rotate72 * flip << "\n";
-  std::cout << rotate144 * flip << "\n";
-  std::cout << rotate216 * flip << "\n";
-  std::cout << rotate288 * flip << "\n";
+  Permutation swap1({
+    1, 2, 3, 4, 5,
+    7, 6, 8, 9, 10, 11, 12, 13, 14, 15
+    });
+
+  Permutation swap2({
+    1, 2, 3, 4, 5,
+    6, 7, 9, 8, 10, 11, 12, 13, 14, 15
+    });
+
+  Permutation swap3({
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 11, 10, 12, 13, 14, 15
+    });
+
+  Permutation swap4({
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10, 11, 13, 12, 14, 15
+    });
+
+  Permutation swap5({
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10, 11, 12, 13, 15, 14
+    });
+
+  Permutation def({
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    });
+
+  std::vector<Permutation> rec;
+  for (int i = 0; i < 0x1F; ++i) {
+    std::vector<Permutation> rt = {
+      def,
+      rotate72,
+      rotate72 * rotate72,
+      rotate72 * rotate72 * rotate72,
+      rotate72 * rotate72  * rotate72  * rotate72,
+      flip,
+      flip * rotate72,
+      flip * (rotate72* rotate72),
+      flip * (rotate72* rotate72* rotate72),
+      flip * (rotate72* rotate72* rotate72* rotate72)};
+    
+    if (i & 1 == 1)
+      for (auto& c : rt)
+        c = c * swap1;
+
+    if ((i & 1 << 1) == 1 << 1)
+      for (auto& c : rt)
+        c = c * swap2;
+
+    if ((i & 1 << 2) == 1 << 2)
+      for (auto& c : rt)
+        c = c * swap3;
+
+    if ((i & 1 << 3) == 1 << 3)
+      for (auto& c : rt)
+        c = c * swap4;
+
+    if ((i & 1 << 4) == 1 << 4)
+      for (auto& c : rt)
+        c = c * swap5;
+    
+    for (auto c : rt)
+      rec.push_back(c);
+  }
+
 
   auto start = omp_get_wtime();
   for (auto it = graph_list.begin(); it != graph_list.end(); ++it) {
-    std::vector<Graph> rotate = { 
-      *it * rotate72, *it * rotate144, *it * rotate216, *it * rotate288, *it * rotate72 * flip,
-      *it * rotate144 * flip, *it * rotate216 * flip, *it * rotate288 * flip, *it*flip };
-
+    std::vector<Graph> rotate(rec.size());
+    for (int i = 0; i < rec.size(); ++i)
+      rotate[i] = *it * rec[i];
     auto inner_it = it;
     inner_it++;
     for (; inner_it != graph_list.end(); ++inner_it) {
@@ -70,6 +128,9 @@ int main() {
         }
     }
   }
+
+
+
   auto end = omp_get_wtime();
   std::cout << "Time: " << end - start << "\n";
 
