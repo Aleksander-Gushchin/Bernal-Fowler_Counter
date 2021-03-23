@@ -1,6 +1,7 @@
 #include "graph.h"
 #include <iostream>
-
+#include <iomanip>
+#include <utility>
 
 Graph::Graph(){}
 
@@ -20,9 +21,16 @@ Graph::Graph(const Graph& g)
   bitfield = g.bitfield;
 }
 
+
 Graph& Graph::operator=(const Graph& g)
 {
   bitfield = g.bitfield;
+  return *this;
+}
+
+Graph& Graph::operator=(Graph&& g) noexcept
+{
+  bitfield = move(g.bitfield);
   return *this;
 }
 

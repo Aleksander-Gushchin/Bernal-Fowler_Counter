@@ -73,9 +73,9 @@ int main() {
     6, 7, 8, 9, 10, 11, 12, 13, 14, 15
     });
 
-  std::vector<Permutation> rec;
+  std::vector<Permutation> group;
   for (int i = 0; i < 0x20; ++i) {
-    std::vector<Permutation> rt = {
+    std::vector<Permutation> basis = {
       def,
       rotate72,
       rotate72 * rotate72,
@@ -88,39 +88,40 @@ int main() {
       flip * (rotate72* rotate72* rotate72* rotate72)};
     
     if (i & 1 == 1)
-      for (auto& c : rt)
-        c = c * swap1;
+      for (auto& c : basis)
+        c *= swap1;
 
     if ((i & 1 << 1) == 1 << 1)
-      for (auto& c : rt)
-        c = c * swap2;
+      for (auto& c : basis)
+        c *= swap2;
 
     if ((i & 1 << 2) == 1 << 2)
-      for (auto& c : rt)
-        c = c * swap3;
+      for (auto& c : basis)
+        c *= swap3;
 
     if ((i & 1 << 3) == 1 << 3)
-      for (auto& c : rt)
-        c = c * swap4;
+      for (auto& c : basis)
+        c *= swap4;
 
     if ((i & 1 << 4) == 1 << 4)
-      for (auto& c : rt)
-        c = c * swap5;
+      for (auto& c : basis)
+        c *= swap5;
     
-    for (auto c : rt)
-      rec.push_back(c);
+    for (auto c : basis)
+      group.push_back(c);
   }
 
+  std::cout << "Group size: " << group.size() << "\n";
 
   auto start = omp_get_wtime();
   for (auto it = graph_list.begin(); it != graph_list.end(); ++it) {
-    std::vector<Graph> rotate(rec.size());
-    for (int i = 0; i < rec.size(); ++i)
-      rotate[i] = *it * rec[i];
+    std::vector<Graph> isom_group(group.size());
+    for (int i = 0; i < group.size(); ++i)
+      isom_group[i] = *it * group[i];
     auto inner_it = it;
     inner_it++;
     for (; inner_it != graph_list.end(); ++inner_it) {
-      for (auto c : rotate)
+      for (auto c : isom_group)
         if (c == *inner_it) {
           inner_it = graph_list.erase(inner_it);
           --inner_it;

@@ -27,6 +27,23 @@ Permutation Permutation::operator*(const Permutation& p)
   return Permutation(res);
 }
 
+Permutation& Permutation::operator*=(const Permutation& p)
+{
+  if (perm.size() != p.perm.size())
+    throw;
+
+  std::vector<int16_t> res(perm.size());
+
+  for (int i = 0; i < perm.size(); ++i) {
+    int sign = (p.perm[i] % 2 + (p.perm[i] + 1) % 2);
+    res[i] = sign * perm[std::abs(p.perm[i]) - 1];
+  }
+
+  perm = res;
+
+  return *this;
+}
+
 Permutation& Permutation::operator=(const Permutation& p)
 {
   perm = p.perm;

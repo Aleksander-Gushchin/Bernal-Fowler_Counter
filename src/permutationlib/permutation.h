@@ -12,6 +12,7 @@ public:
   Permutation(const std::vector<int16_t>& _perm);
   
   Permutation operator*(const Permutation& p);
+  Permutation& operator*=(const Permutation& p);
   Permutation& operator=(const Permutation& p);
 
   bool operator==(const Permutation& p);

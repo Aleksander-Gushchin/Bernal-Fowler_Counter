@@ -15,6 +15,7 @@ public:
   Graph(const Graph& g);
 
   Graph& operator=(const Graph& g);
+  Graph& operator=(Graph&& g) noexcept;
 
   Graph operator*(const Permutation & p);
   bool operator==(const Graph& g);
