@@ -74,7 +74,7 @@ int main() {
     });
 
   std::vector<Permutation> rec;
-  for (int i = 0; i < 0x1F; ++i) {
+  for (int i = 0; i < 0x20; ++i) {
     std::vector<Permutation> rt = {
       def,
       rotate72,
@@ -128,9 +128,6 @@ int main() {
         }
     }
   }
-
-
-
   auto end = omp_get_wtime();
   std::cout << "Time: " << end - start << "\n";
 
