@@ -113,21 +113,6 @@ int main() {
 
   auto invariant_list = graph_list;
 
-  std::vector<Permutation> basis = {
-      def,
-      rotate72,
-      rotate72 * rotate72,
-      rotate72 * rotate72 * rotate72,
-      rotate72 * rotate72 * rotate72 * rotate72,
-      flip,
-      flip * rotate72,
-      flip * (rotate72 * rotate72),
-      flip * (rotate72 * rotate72 * rotate72),
-      flip * (rotate72 * rotate72 * rotate72 * rotate72) };
-
-  for (auto c : basis)
-    std::cout << c << "\n";
-
   std::cout << "Group size: " << group.size() << "\n";
 
   std::vector< std::vector<Graph> > orbit;
@@ -163,8 +148,6 @@ int main() {
   std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";
   for (auto c : graph_list)
     std::cout << c << "\n";
-
-
 
   return 0;
 }
