@@ -1,10 +1,12 @@
 #include <iostream>
 #include "graph.h"
-
+#include <list>
+#include <omp.h>
 
 
 int main() {
 
+  std::list<Graph> graph_list;
   int counter = 0;
 
   for (uint32_t b_i = 0; b_i < 32767; ++b_i) {
@@ -26,11 +28,113 @@ int main() {
       for (auto c : X)
         std::cout << c << " ";
       std::cout << "\n";
+      graph_list.push_back(Graph(X));
       counter++;
     }
   }
 
+  Permutation rotate72({
+    5, 1, 2, 3, 4,
+    14, 15, 6, 7, 8, 9, 10, 11, 12, 13
+    });
 
-  std::cout << counter;
+  Permutation flip({
+    -2, -1, -5, -4, -3,
+    7, 6, 15, 14, 13, 12, 11, 10, 9, 8
+    });
+
+  Permutation swap1({
+    1, 2, 3, 4, 5,
+    7, 6, 8, 9, 10, 11, 12, 13, 14, 15
+    });
+
+  Permutation swap2({
+    1, 2, 3, 4, 5,
+    6, 7, 9, 8, 10, 11, 12, 13, 14, 15
+    });
+
+  Permutation swap3({
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 11, 10, 12, 13, 14, 15
+    });
+
+  Permutation swap4({
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10, 11, 13, 12, 14, 15
+    });
+
+  Permutation swap5({
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10, 11, 12, 13, 15, 14
+    });
+
+  Permutation def({
+    1, 2, 3, 4, 5,
+    6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    });
+
+  std::vector<Permutation> group;
+  for (int i = 0; i < 0x20; ++i) {
+    std::vector<Permutation> basis = {
+      def,
+      rotate72,
+      rotate72 * rotate72,
+      rotate72 * rotate72 * rotate72,
+      rotate72 * rotate72  * rotate72  * rotate72,
+      flip,
+      flip * rotate72,
+      flip * (rotate72* rotate72),
+      flip * (rotate72* rotate72* rotate72),
+      flip * (rotate72* rotate72* rotate72* rotate72)};
+    
+    if (i & 1 == 1)
+      for (auto& c : basis)
+        c *= swap1;
+
+    if ((i & 1 << 1) == 1 << 1)
+      for (auto& c : basis)
+        c *= swap2;
+
+    if ((i & 1 << 2) == 1 << 2)
+      for (auto& c : basis)
+        c *= swap3;
+
+    if ((i & 1 << 3) == 1 << 3)
+      for (auto& c : basis)
+        c *= swap4;
+
+    if ((i & 1 << 4) == 1 << 4)
+      for (auto& c : basis)
+        c *= swap5;
+    
+    for (auto c : basis)
+      group.push_back(c);
+  }
+
+  std::cout << "Group size: " << group.size() << "\n";
+
+  auto start = omp_get_wtime();
+  for (auto it = graph_list.begin(); it != graph_list.end(); ++it) {
+    std::vector<Graph> isom_group(group.size());
+    for (int i = 0; i < group.size(); ++i)
+      isom_group[i] = *it * group[i];
+    auto inner_it = it;
+    inner_it++;
+    for (; inner_it != graph_list.end(); ++inner_it) {
+      for (auto c : isom_group)
+        if (c == *inner_it) {
+          inner_it = graph_list.erase(inner_it);
+          --inner_it;
+          break;
+        }
+    }
+  }
+  auto end = omp_get_wtime();
+  std::cout << "Time: " << end - start << "\n";
+
+  std::cout << "All graphs count: " << counter << "\n";
+  std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";
+  for (auto c : graph_list)
+    std::cout << c << "\n";
   return 0;
 }
