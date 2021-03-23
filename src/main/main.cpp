@@ -2,7 +2,7 @@
 #include "graph.h"
 #include <list>
 #include <omp.h>
-
+#include <unordered_map>
 
 int main() {
 
@@ -111,30 +111,60 @@ int main() {
       group.push_back(c);
   }
 
+  auto invariant_list = graph_list;
+
+  std::vector<Permutation> basis = {
+      def,
+      rotate72,
+      rotate72 * rotate72,
+      rotate72 * rotate72 * rotate72,
+      rotate72 * rotate72 * rotate72 * rotate72,
+      flip,
+      flip * rotate72,
+      flip * (rotate72 * rotate72),
+      flip * (rotate72 * rotate72 * rotate72),
+      flip * (rotate72 * rotate72 * rotate72 * rotate72) };
+
+  for (auto c : basis)
+    std::cout << c << "\n";
+
   std::cout << "Group size: " << group.size() << "\n";
 
+  std::vector< std::vector<Graph> > orbit;
+
+  int index_of_graph = 0;
   auto start = omp_get_wtime();
   for (auto it = graph_list.begin(); it != graph_list.end(); ++it) {
+    orbit.push_back(std::vector<Graph>(1, *it));
     std::vector<Graph> isom_group(group.size());
     for (int i = 0; i < group.size(); ++i)
       isom_group[i] = *it * group[i];
     auto inner_it = it;
-    inner_it++;
+    ++inner_it;
     for (; inner_it != graph_list.end(); ++inner_it) {
       for (auto c : isom_group)
         if (c == *inner_it) {
+          orbit[index_of_graph].push_back(*inner_it);
           inner_it = graph_list.erase(inner_it);
           --inner_it;
           break;
         }
     }
+    ++index_of_graph;
   }
   auto end = omp_get_wtime();
   std::cout << "Time: " << end - start << "\n";
+
+  for(auto c:orbit)
+    std::cout << "size: " << c.size() << "\n";
+
 
   std::cout << "All graphs count: " << counter << "\n";
   std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";
   for (auto c : graph_list)
     std::cout << c << "\n";
+
+
+
   return 0;
 }
