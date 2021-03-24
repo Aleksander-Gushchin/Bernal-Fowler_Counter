@@ -2,7 +2,6 @@
 #include "graph.h"
 #include <list>
 #include <omp.h>
-#include <unordered_map>
 
 int main() {
 
@@ -142,7 +141,6 @@ int main() {
 
   for(auto c:orbit)
     std::cout << "size: " << c.size() << "\n";
-
 
   std::cout << "All graphs count: " << counter << "\n";
   std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";
