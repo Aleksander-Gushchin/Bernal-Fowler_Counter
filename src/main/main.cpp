@@ -8,7 +8,7 @@ int main() {
   std::list<Graph> graph_list;
   int counter = 0;
 
-  for (uint32_t b_i = 0; b_i < 32767; ++b_i) {
+  for (uint32_t b_i = 0; b_i < 0x7FFF + 1; ++b_i) {
     std::vector<bool> X(15, 0);
     for (int i = 0; i < 15; ++i)
       X[i] = (b_i & 1 << i) >> i;
@@ -24,7 +24,7 @@ int main() {
 
 
     if (isBernaul == true) {
-      for (auto c : X)
+      for (const auto& c : X)
         std::cout << c << " ";
       std::cout << "\n";
       graph_list.push_back(Graph(X));
@@ -106,7 +106,7 @@ int main() {
       for (auto& c : basis)
         c *= swap5;
     
-    for (auto c : basis)
+    for (const auto& c : basis)
       group.push_back(c);
   }
 
@@ -139,12 +139,14 @@ int main() {
   auto end = omp_get_wtime();
   std::cout << "Time: " << end - start << "\n";
 
-  for(auto c:orbit)
-    std::cout << "size: " << c.size() << "\n";
+  for(const auto& c:orbit)
+    std::cout << "Size: " << c.size() << "\n";
+
+
 
   std::cout << "All graphs count: " << counter << "\n";
   std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";
-  for (auto c : graph_list)
+  for (const auto& c : graph_list)
     std::cout << c << "\n";
 
   return 0;

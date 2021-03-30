@@ -12,14 +12,9 @@ Graph::Graph(uint32_t b_field, uint8_t size){
     bitfield[i] = (b_field & 1 << i) >> i;
 }
 
-Graph::Graph(const std::vector<bool>& vec){
-  bitfield = vec;
-}
+Graph::Graph(const std::vector<bool>& vec) : bitfield(vec) {}
 
-Graph::Graph(const Graph& g)
-{
-  bitfield = g.bitfield;
-}
+Graph::Graph(const Graph& g) : bitfield(g.bitfield) {}
 
 
 Graph& Graph::operator=(const Graph& g)

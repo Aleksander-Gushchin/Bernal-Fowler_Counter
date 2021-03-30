@@ -8,10 +8,7 @@ Permutation::Permutation()
 {
 }
 
-Permutation::Permutation(const std::vector<int16_t> & _perm)
-{
-  perm = _perm;
-}
+Permutation::Permutation(const std::vector<int16_t> & _perm) : perm(_perm) {}
 
 Permutation Permutation::operator*(const Permutation& p)
 {
