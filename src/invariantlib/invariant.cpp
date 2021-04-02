@@ -34,10 +34,10 @@ Invariant::Invariant(const std::vector<int>& cons, const std::vector<std::vector
     polynom.push_back(Monom(cons[i], vec[i]));
 }
 
-int Invariant::getHash(const Graph& g)
+int Invariant::getValue(const Graph& g)
 {
   int res = 0;
   for (auto& c : polynom)
     res += c.getValue(g);
-  return 0;
+  return res;
 }
