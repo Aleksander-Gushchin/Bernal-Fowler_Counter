@@ -110,6 +110,23 @@ int main() {
       group.push_back(c);
   }
 
+#ifdef __SHOW_GROUP
+  std::vector<Permutation> basis = {
+      def,
+      rotate72,
+      rotate72 * rotate72,
+      rotate72 * rotate72 * rotate72,
+      rotate72 * rotate72 * rotate72 * rotate72,
+      flip,
+      flip * rotate72,
+      flip * (rotate72 * rotate72),
+      flip * (rotate72 * rotate72 * rotate72),
+      flip * (rotate72 * rotate72 * rotate72 * rotate72) };
+  for (auto& c : basis)
+    std::cout << c << "\n";
+#endif // !__SHOW_GROUP
+
+
   auto invariant_list = graph_list;
 
   std::cout << "Group size: " << group.size() << "\n";

@@ -22,6 +22,9 @@ public:
   bool operator==(Graph&& g);
 
   std::vector< bool >::reference operator[](uint32_t i);
+  const bool operator[](uint32_t i) const;
+
+  const size_t getSize() const;
 
   friend std::ostream& operator<<(std::ostream& os, Graph g);
 };

@@ -73,6 +73,16 @@ std::vector<bool>::reference Graph::operator[](uint32_t i)
   return bitfield[i];
 }
 
+const bool Graph::operator[](uint32_t i) const
+{
+  return bitfield[i];
+}
+
+const size_t Graph::getSize() 
+{
+  return bitfield.size();
+}
+
 std::ostream& operator<<(std::ostream& os, Graph g)
 {
   for (auto c : g.bitfield)
