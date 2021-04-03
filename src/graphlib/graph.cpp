@@ -31,7 +31,7 @@ Graph& Graph::operator=(Graph&& g) noexcept
 
 Graph Graph::operator*(const Permutation& p){
   if (p.get_size() != bitfield.size())
-    throw;
+    throw 1;
 
   std::vector<bool> res(bitfield.size());
 
@@ -78,7 +78,7 @@ const bool Graph::operator[](uint32_t i) const
   return bitfield[i];
 }
 
-const size_t Graph::getSize() 
+const size_t Graph::getSize() const
 {
   return bitfield.size();
 }

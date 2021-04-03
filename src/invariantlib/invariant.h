@@ -9,11 +9,11 @@ class Invariant {
 private:
   class Monom {
   private:
-    uint8_t cons;
+    int cons;
     std::vector<bool> exp;
     int inline exctract(int val);
   public:
-    Monom(uint8_t _c, const std::vector<bool>& vec);
+    Monom(int _c, const std::vector<bool>& vec);
     int getValue(const Graph& g);
   };
 
@@ -22,5 +22,5 @@ private:
   
 public:
   Invariant(const std::vector<int>& cons,const std::vector<std::vector<bool> >& vec);
-  int getHash(const Graph& g);
+  int getValue(const Graph& g);
 };

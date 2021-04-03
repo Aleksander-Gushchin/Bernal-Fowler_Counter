@@ -8,19 +8,19 @@ int inline Invariant::Monom::exctract(int val)
   return 2 * val - 1;
 }
 
-Invariant::Monom::Monom(uint8_t _c,const std::vector<bool>& vec) : cons(_c) , exp(vec)
+Invariant::Monom::Monom(int _c,const std::vector<bool>& vec) : cons(_c) , exp(vec)
 {
 }
 
 int Invariant::Monom::getValue(const Graph& g)
 {
   if (g.getSize() != exp.size())
-    throw;
+    throw 1;
 
-  int res = 0;
+  int res = 1;
 
   for (int i = 0; i < exp.size(); ++i)
-    res += exp[i] * exctract(g[i]);
+    res *= exctract(g[i]) * exp[i] + (1 - exp[i]);
   return cons * res;
 }
 
@@ -28,7 +28,7 @@ int Invariant::Monom::getValue(const Graph& g)
 Invariant::Invariant(const std::vector<int>& cons, const std::vector<std::vector<bool>>& vec)
 {
   if (cons.size() != vec.size())
-    throw;
+    throw 1;
 
   for (int i = 0; i < vec.size();++i)
     polynom.push_back(Monom(cons[i], vec[i]));
