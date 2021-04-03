@@ -3,6 +3,7 @@ cmake_minimum_required( VERSION 3.9 )
 project(OrgraphCount)
 
 set(graphlib graphlib)
+set(invariantlib invariantlib)
 set(permutationlib permutationlib)
 set(orgtest orgtest)
 

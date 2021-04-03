@@ -12,14 +12,9 @@ Graph::Graph(uint32_t b_field, uint8_t size){
     bitfield[i] = (b_field & 1 << i) >> i;
 }
 
-Graph::Graph(const std::vector<bool>& vec){
-  bitfield = vec;
-}
+Graph::Graph(const std::vector<bool>& vec) : bitfield(vec) {}
 
-Graph::Graph(const Graph& g)
-{
-  bitfield = g.bitfield;
-}
+Graph::Graph(const Graph& g) : bitfield(g.bitfield) {}
 
 
 Graph& Graph::operator=(const Graph& g)
@@ -36,7 +31,7 @@ Graph& Graph::operator=(Graph&& g) noexcept
 
 Graph Graph::operator*(const Permutation& p){
   if (p.get_size() != bitfield.size())
-    throw;
+    throw 1;
 
   std::vector<bool> res(bitfield.size());
 
@@ -76,6 +71,16 @@ bool Graph::operator==(Graph&& g)
 std::vector<bool>::reference Graph::operator[](uint32_t i)
 {
   return bitfield[i];
+}
+
+const bool Graph::operator[](uint32_t i) const
+{
+  return bitfield[i];
+}
+
+const size_t Graph::getSize() const
+{
+  return bitfield.size();
 }
 
 std::ostream& operator<<(std::ostream& os, Graph g)

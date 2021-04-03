@@ -8,15 +8,12 @@ Permutation::Permutation()
 {
 }
 
-Permutation::Permutation(const std::vector<int16_t> & _perm)
-{
-  perm = _perm;
-}
+Permutation::Permutation(const std::vector<int16_t> & _perm) : perm(_perm) {}
 
 Permutation Permutation::operator*(const Permutation& p)
 {
   if (perm.size() != p.perm.size())
-    throw;
+    throw 1;
 
   std::vector<int16_t> res(perm.size());
 
@@ -30,7 +27,7 @@ Permutation Permutation::operator*(const Permutation& p)
 Permutation& Permutation::operator*=(const Permutation& p)
 {
   if (perm.size() != p.perm.size())
-    throw;
+    throw 1;
 
   std::vector<int16_t> res(perm.size());
 

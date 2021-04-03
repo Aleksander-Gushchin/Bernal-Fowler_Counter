@@ -6,5 +6,5 @@ file(GLOB hdrs "*.h*")
 file(GLOB srcs "*.cpp")
 
 add_executable(${orgtest} ${srcs} ${hdrs})
-target_link_libraries(${orgtest} ${graphlib} ${permutationlib} gtest)
+target_link_libraries(${orgtest} ${graphlib} ${permutationlib} ${invariantlib} gtest)
 
