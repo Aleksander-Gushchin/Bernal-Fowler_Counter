@@ -1,7 +1,9 @@
 #include <iostream>
 #include "graph.h"
+#include "invariant.h"
 #include <list>
 #include <omp.h>
+#include <map>
 
 int main() {
 
@@ -24,9 +26,9 @@ int main() {
 
 
     if (isBernaul == true) {
-      for (const auto& c : X)
+      /*for (const auto& c : X)
         std::cout << c << " ";
-      std::cout << "\n";
+      std::cout << "\n";*/
       graph_list.push_back(Graph(X));
       counter++;
     }
@@ -110,6 +112,7 @@ int main() {
       group.push_back(c);
   }
 
+//#define __SHOW_GROUP
 #ifdef __SHOW_GROUP
   std::vector<Permutation> basis = {
       def,
@@ -159,7 +162,42 @@ int main() {
   for(const auto& c:orbit)
     std::cout << "Size: " << c.size() << "\n";
 
+  class Counter {
+    int count;
+    int key;
+  public:
+    Counter(int _key) :key(_key), count(1) {};
+    void update() { count++; };
+    int getKey() { return key; };
+    int getCount() { return count; };
+  };
 
+  std::vector<Invariant> invariant_group;
+  invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0x3, 0x11, 0x18, 0xC, 0x6 }, 15));
+  
+  std::map<int, std::list<Graph>> tmp_arr;
+  start = omp_get_wtime();
+  for (auto& invariant : invariant_group) {
+    std::vector<Counter> counter_vec;
+    for (auto& c : invariant_list) {
+      int res = invariant.getValue(c);
+
+      bool isNew = true;
+      for (auto& co : counter_vec) {
+        if (co.getKey() == res) {
+          isNew = false;
+          co.update();
+          break;
+        }
+      }
+      if (isNew == true)
+        counter_vec.push_back(Counter(res));
+    }
+    for (auto& c : counter_vec)
+      std::cout << "Item: " << c.getKey() << " Count: " << c.getCount() << "\n";
+  }
+  end = omp_get_wtime();
+  std::cout << "Time: " << end - start << "\n";
 
   std::cout << "All graphs count: " << counter << "\n";
   std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";
