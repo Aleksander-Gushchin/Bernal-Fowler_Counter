@@ -166,6 +166,14 @@ int main() {
     int key;
     std::list<Graph*> graph_list;
     std::list<InvariantTree> tree;
+
+    void collect(std::list<int>& list) {
+      if (graph_list.size() == 0)
+        for (auto& sub_tree : tree)
+          sub_tree.collect(list);
+      else
+        list.push_back(graph_list.size());
+    }
   public:
     InvariantTree(int _key, std::list<Graph>& g_l) :key (_key) {
       for (auto& c : g_l)
@@ -173,29 +181,29 @@ int main() {
     };
     InvariantTree(int _key) :key(_key) {};
 
-    void add(Graph & g) {
-      graph_list.push_back(&g);
+    void add(Graph* g) {
+      graph_list.push_back(g);
     }
 
     void split(Invariant& inv) {
       if (graph_list.size() == 0)
-        for (auto& c : tree)
-          c.split(inv);
+        for (auto& sub_tree : tree)
+          sub_tree.split(inv);
       else {
-        for (auto& c : graph_list) {
-          Graph& tmp_g = *c;
-          int tmp = inv.getValue(tmp_g);
+        for (auto& graph_pointer : graph_list) {
+          Graph& graph_ref = *graph_pointer;
+          int tmp = inv.getValue(graph_ref);
           bool isIns = false;
-          for (auto& el : tree) {
-            if (el.getKey() == tmp) {
-              el.add(tmp_g);
+          for (auto& sub_tree : tree) {
+            if (sub_tree.getKey() == tmp) {
+              sub_tree.add(graph_pointer);
               isIns = true;
               break;
             }
           }
           if (isIns == false) {
             tree.push_back(InvariantTree(tmp));
-            (--tree.end())->add(tmp_g);
+            (--tree.end())->add(graph_pointer);
           }
         }
         graph_list.clear();
@@ -203,19 +211,11 @@ int main() {
 
     };
 
-    void collect(std::list<int>& list) {
-      if (graph_list.size() == 0)
-        for (auto& c : tree)
-          c.collect(list);
-      else
-        list.push_back(graph_list.size());
-    }
-
     std::list<int> getCount() {
       std::list<int> res;
       if (graph_list.size() == 0)
-        for (auto& c : tree)
-          c.collect(res);
+        for (auto& sub_tree : tree)
+          sub_tree.collect(res);
       else
         res.push_back(graph_list.size());
 
@@ -228,7 +228,7 @@ int main() {
 
   std::vector<Invariant> invariant_group;
   invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0x3, 0x11, 0x18, 0xC, 0x6 }, 15));
-  //invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0x2, 0x11, 0x18, 0xC, 0x6 }, 15));
+  invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0xF, 0x17, 0x1B, 0x1D, 0x1E }, 15));
   
   InvariantTree invariant_proc(0, invariant_list);
 
