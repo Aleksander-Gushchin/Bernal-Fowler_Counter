@@ -1,7 +1,9 @@
 #include <iostream>
 #include "graph.h"
+#include "invariant.h"
 #include <list>
 #include <omp.h>
+#include <map>
 
 int main() {
 
@@ -24,9 +26,9 @@ int main() {
 
 
     if (isBernaul == true) {
-      for (const auto& c : X)
+      /*for (const auto& c : X)
         std::cout << c << " ";
-      std::cout << "\n";
+      std::cout << "\n";*/
       graph_list.push_back(Graph(X));
       counter++;
     }
@@ -110,6 +112,7 @@ int main() {
       group.push_back(c);
   }
 
+#define __SHOW_GROUP
 #ifdef __SHOW_GROUP
   std::vector<Permutation> basis = {
       def,
@@ -159,7 +162,85 @@ int main() {
   for(const auto& c:orbit)
     std::cout << "Size: " << c.size() << "\n";
 
+  class InvariantTree {
+    int key;
+    std::list<Graph*> graph_list;
+    std::list<InvariantTree> tree;
 
+    void collect(std::list<int>& list) {
+      if (graph_list.size() == 0)
+        for (auto& sub_tree : tree)
+          sub_tree.collect(list);
+      else
+        list.push_back(graph_list.size());
+    }
+  public:
+    InvariantTree(int _key, std::list<Graph>& g_l) :key (_key) {
+      for (auto& c : g_l)
+        graph_list.push_back(&c);
+    };
+    InvariantTree(int _key) :key(_key) {};
+
+    void add(Graph* g) {
+      graph_list.push_back(g);
+    }
+
+    void split(Invariant& inv) {
+      if (graph_list.size() == 0)
+        for (auto& sub_tree : tree)
+          sub_tree.split(inv);
+      else {
+        for (auto& graph_pointer : graph_list) {
+          Graph& graph_ref = *graph_pointer;
+          int tmp = inv.getValue(graph_ref);
+          bool isIns = false;
+          for (auto& sub_tree : tree) {
+            if (sub_tree.getKey() == tmp) {
+              sub_tree.add(graph_pointer);
+              isIns = true;
+              break;
+            }
+          }
+          if (isIns == false) {
+            tree.push_back(InvariantTree(tmp));
+            (--tree.end())->add(graph_pointer);
+          }
+        }
+        graph_list.clear();
+      }
+
+    };
+
+    std::list<int> getCount() {
+      std::list<int> res;
+      if (graph_list.size() == 0)
+        for (auto& sub_tree : tree)
+          sub_tree.collect(res);
+      else
+        res.push_back(graph_list.size());
+
+      return res;
+    };
+
+    int getKey() { return key; };
+
+  };
+
+  std::vector<Invariant> invariant_group;
+  invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0x3, 0x11, 0x18, 0xC, 0x6 }, 15));
+  invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0xF, 0x17, 0x1B, 0x1D, 0x1E }, 15));
+  
+  InvariantTree invariant_proc(0, invariant_list);
+
+  start = omp_get_wtime();
+  for (auto& invariant : invariant_group) {
+    invariant_proc.split(invariant);
+  }
+  end = omp_get_wtime();
+  std::cout << "Time: " << end - start << "\n";
+
+  for (auto& c : invariant_proc.getCount())
+    std::cout << "inv size: " << c << "\n";
 
   std::cout << "All graphs count: " << counter << "\n";
   std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";

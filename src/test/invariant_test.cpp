@@ -13,12 +13,12 @@ TEST(invariant, can_throw_when_invalid_args) {
 }
 
 TEST(invariant, get_value) {
-  Invariant inv({ 1, 3, 1 },
-    { {1, 0, 1}, {1, 1, 1},{0, 0, 1} });
+  Invariant inv({ 1, 3, 1 , -2},
+    { {1, 0, 1}, {1, 1, 1},{0, 0, 1} , {1, 1, 0} });
 
   Graph g({ 1, 0, 1 });
 
   int res = inv.getValue(g);
 
-  EXPECT_EQ(-1, res);
+  EXPECT_EQ(1, res);
 }

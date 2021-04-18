@@ -12,6 +12,11 @@ Invariant::Monom::Monom(int _c,const std::vector<bool>& vec) : cons(_c) , exp(ve
 {
 }
 
+Invariant::Monom::Monom(int _c, std::vector<bool>&& vec) : cons(_c), exp(move(vec))
+{
+
+}
+
 int Invariant::Monom::getValue(const Graph& g)
 {
   if (g.getSize() != exp.size())
@@ -32,6 +37,19 @@ Invariant::Invariant(const std::vector<int>& cons, const std::vector<std::vector
 
   for (int i = 0; i < vec.size();++i)
     polynom.push_back(Monom(cons[i], vec[i]));
+}
+
+Invariant::Invariant(const std::vector<int>& cons, const std::vector<uint32_t>& vec, int size)
+{
+  if (cons.size() != vec.size())
+    throw 1;
+
+  for (int i = 0; i < vec.size(); ++i) {
+    std::vector<bool> tmp(size);
+    for (int j = 0; j < size; ++j)
+      tmp[j] = (vec[i] & 1 << j) >> j;
+    polynom.push_back(Monom(cons[i], move(tmp)));
+  }
 }
 
 int Invariant::getValue(const Graph& g)

@@ -14,6 +14,7 @@ private:
     int inline exctract(int val);
   public:
     Monom(int _c, const std::vector<bool>& vec);
+    Monom(int _c, std::vector<bool>&& vec);
     int getValue(const Graph& g);
   };
 
@@ -22,5 +23,6 @@ private:
   
 public:
   Invariant(const std::vector<int>& cons,const std::vector<std::vector<bool> >& vec);
+  Invariant(const std::vector<int>& cons, const std::vector<uint32_t>& vec, int size);
   int getValue(const Graph& g);
 };
