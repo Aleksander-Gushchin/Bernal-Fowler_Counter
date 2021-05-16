@@ -3,7 +3,7 @@
 #include "invariant.h"
 #include <list>
 #include <omp.h>
-#include <fstream>
+
 
 int inline extract(int a) { return 2 * a - 1; }
 
@@ -33,12 +33,6 @@ int main() {
       counter++;
     }
   }
-  /*
-  for (auto& c : graph_list)
-    if (c[0] == 1 && c[1] == 1)
-      std::cout << c << "\n";
-  std::cout << "\n";
-  */
 
   std::cout << "graph size: " << graph_list.size() << "\n";
 
