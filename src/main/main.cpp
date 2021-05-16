@@ -170,82 +170,16 @@ int main() {
   for(const auto& c:orbit)
     std::cout << "Size: " << c.size() << "\n";
 
-
-  /*
-  class InvariantTree {
-    int key;
-    std::list<Graph*> graph_list;
-    std::list<InvariantTree> tree;
-
-    void collect(std::list<int>& list) {
-      if (graph_list.size() == 0)
-        for (auto& sub_tree : tree)
-          sub_tree.collect(list);
-      else
-        list.push_back(graph_list.size());
-    }
-  public:
-    InvariantTree(int _key, std::list<Graph>& g_l) : key (_key) {
-      for (auto& c : g_l)
-        graph_list.push_back(&c);
-    };
-    InvariantTree(int _key) :key(_key) {};
-
-    void add(Graph* g) {
-      graph_list.push_back(g);
-    }
-
-    void split(Invariant& inv) {
-      if (graph_list.size() == 0)
-        for (auto& sub_tree : tree)
-          sub_tree.split(inv);
-      else {
-        for (auto& graph_pointer : graph_list) {
-          Graph& graph_ref = *graph_pointer;
-          int tmp = inv.getValue(graph_ref);
-          bool isIns = false;
-          for (auto& sub_tree : tree) {
-            if (sub_tree.getKey() == tmp) {
-              sub_tree.add(graph_pointer);
-              isIns = true;
-              break;
-            }
-          }
-          if (isIns == false) {
-            tree.push_back(InvariantTree(tmp));
-            (--tree.end())->add(graph_pointer);
-          }
-        }
-        graph_list.clear();
-      }
-
-    };
-
-    std::list<int> getCountList() {
-      std::list<int> res;
-      if (graph_list.size() == 0)
-        for (auto& sub_tree : tree)
-          sub_tree.collect(res);
-      else
-        res.push_back(graph_list.size());
-
-      return res;
-    };
-
-    int getKey() { return key; };
-
-  };
-  */
-
   class InvariantID {
   private:
     std::list<int> id_list;
   public:
     InvariantID() {};
-    InvariantID(const InvariantID& tmp) { id_list = tmp.id_list; };
+    InvariantID(const InvariantID& tmp) : id_list(tmp.id_list){};
+
     void add(int val) { id_list.push_back(val); };
 
-    bool operator==(const InvariantID& inv_list) {
+    bool operator==(const InvariantID& inv_list) const{
       auto it_left = id_list.begin();
       auto it_right = inv_list.id_list.begin();
 
@@ -254,6 +188,16 @@ int main() {
           return false;
       return true;
     };
+  };
+
+  class InvGraph {
+    std::list<Graph*> id_list;
+    InvariantID id;
+  public:
+    InvGraph(const InvariantID& _id) : id(_id) {};
+    void add(Graph* g) { id_list.push_back(g); }
+    int size() { return id_list.size(); }
+    const InvariantID& getID() { return id; };
   };
 
   std::vector<Invariant> invariant_group;
@@ -271,23 +215,25 @@ int main() {
       cur_item.second.add(invariant.getValue(*cur_item.first));
   }
 
-  std::vector<std::pair<InvariantID, int>> size_of_group;
-  size_of_group.push_back(std::make_pair(inv_split.begin()->second, 0));
+  std::vector<InvGraph> inv_gr;
   for (auto& cur_item : inv_split) {
     bool insert = true;
-    for (auto& c : size_of_group)
-      if (c.first == cur_item.second) {
-        c.second++;
+    for (auto& c : inv_gr)
+      if (c.getID() == cur_item.second) {
+        c.add(cur_item.first);
         insert = false;
       }
-    if (insert == true)
-      size_of_group.push_back(std::make_pair(cur_item.second, 1));
+    if (insert == true) {
+      inv_gr.push_back(cur_item.second);
+      (--inv_gr.end())->add(cur_item.first);
+    }
+    
   }
   end = omp_get_wtime();
   std::cout << "Time: " << end - start << "\n";
 
-  for (auto& c : size_of_group)
-    std::cout << "inv size: " << c.second << "\n";
+  for (auto& c : inv_gr)
+    std::cout << "inv size: " << c.size() << "\n";
 
   std::cout << "All graphs count: " << counter << "\n";
   std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";
