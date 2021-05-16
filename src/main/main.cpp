@@ -3,7 +3,10 @@
 #include "invariant.h"
 #include <list>
 #include <omp.h>
-#include <map>
+#include <fstream>
+
+int inline extract(int a) { return 2 * a - 1; }
+
 
 int main() {
 
@@ -26,14 +29,32 @@ int main() {
 
 
     if (isBernaul == true) {
-      /*for (const auto& c : X)
-        std::cout << c << " ";
-      std::cout << "\n";*/
       graph_list.push_back(Graph(X));
       counter++;
     }
   }
+  /*
+  for (auto& c : graph_list)
+    if (c[0] == 1 && c[1] == 1)
+      std::cout << c << "\n";
+  std::cout << "\n";
+  */
 
+  std::ofstream out;
+  out.open("D:\\Git\\Nauchka\\tmp.txt");
+  if (out.is_open())
+  {
+    for (auto& c : graph_list)
+      if (c[0] == 1 && c[1] == 1 && c[2] == 1 && c[3] == 1 && c[4] == 1) {
+        for (int i = 0; i < 15; ++i)
+          out << (extract(c[i]) > 0 ? "+" : "")  << extract(c[i]) << ", ";
+        out << "\n";
+      }
+  }
+
+  std::cout << "graph size: " << graph_list.size() << "\n";
+
+  out.close();
   Permutation rotate72({
     5, 1, 2, 3, 4,
     14, 15, 6, 7, 8, 9, 10, 11, 12, 13
@@ -112,7 +133,7 @@ int main() {
       group.push_back(c);
   }
 
-#define __SHOW_GROUP
+//#define __SHOW_GROUP
 #ifdef __SHOW_GROUP
   std::vector<Permutation> basis = {
       def,
@@ -146,7 +167,7 @@ int main() {
     auto inner_it = it;
     ++inner_it;
     for (; inner_it != graph_list.end(); ++inner_it) {
-      for (auto c : isom_group)
+      for (auto& c : isom_group)
         if (c == *inner_it) {
           orbit[index_of_graph].push_back(*inner_it);
           inner_it = graph_list.erase(inner_it);
@@ -162,6 +183,8 @@ int main() {
   for(const auto& c:orbit)
     std::cout << "Size: " << c.size() << "\n";
 
+
+  /*
   class InvariantTree {
     int key;
     std::list<Graph*> graph_list;
@@ -175,7 +198,7 @@ int main() {
         list.push_back(graph_list.size());
     }
   public:
-    InvariantTree(int _key, std::list<Graph>& g_l) :key (_key) {
+    InvariantTree(int _key, std::list<Graph>& g_l) : key (_key) {
       for (auto& c : g_l)
         graph_list.push_back(&c);
     };
@@ -211,7 +234,7 @@ int main() {
 
     };
 
-    std::list<int> getCount() {
+    std::list<int> getCountList() {
       std::list<int> res;
       if (graph_list.size() == 0)
         for (auto& sub_tree : tree)
@@ -225,22 +248,59 @@ int main() {
     int getKey() { return key; };
 
   };
+  */
+
+  class InvariantID {
+  private:
+    std::list<int> id_list;
+  public:
+    InvariantID() {};
+    InvariantID(const InvariantID& tmp) { id_list = tmp.id_list; };
+    void add(int val) { id_list.push_back(val); };
+
+    bool operator==(const InvariantID& inv_list) {
+      auto it_left = id_list.begin();
+      auto it_right = inv_list.id_list.begin();
+
+      for (; it_left != id_list.end() || it_right != inv_list.id_list.end(); ++it_left, ++it_right)
+        if (*it_left != *it_right)
+          return false;
+      return true;
+    };
+  };
 
   std::vector<Invariant> invariant_group;
   invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0x3, 0x11, 0x18, 0xC, 0x6 }, 15));
   invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0xF, 0x17, 0x1B, 0x1D, 0x1E }, 15));
   
-  InvariantTree invariant_proc(0, invariant_list);
+  std::list<std::pair<Graph*, InvariantID>> inv_split;
+  
+  for (auto& c : invariant_list)
+    inv_split.push_back(std::make_pair(&c, InvariantID()));
 
   start = omp_get_wtime();
   for (auto& invariant : invariant_group) {
-    invariant_proc.split(invariant);
+    for (auto& cur_item : inv_split)
+      cur_item.second.add(invariant.getValue(*cur_item.first));
+  }
+
+  std::vector<std::pair<InvariantID, int>> size_of_group;
+  size_of_group.push_back(std::make_pair(inv_split.begin()->second, 0));
+  for (auto& cur_item : inv_split) {
+    bool insert = true;
+    for (auto& c : size_of_group)
+      if (c.first == cur_item.second) {
+        c.second++;
+        insert = false;
+      }
+    if (insert == true)
+      size_of_group.push_back(std::make_pair(cur_item.second, 1));
   }
   end = omp_get_wtime();
   std::cout << "Time: " << end - start << "\n";
 
-  for (auto& c : invariant_proc.getCount())
-    std::cout << "inv size: " << c << "\n";
+  for (auto& c : size_of_group)
+    std::cout << "inv size: " << c.second << "\n";
 
   std::cout << "All graphs count: " << counter << "\n";
   std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";
