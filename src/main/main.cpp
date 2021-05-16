@@ -40,21 +40,8 @@ int main() {
   std::cout << "\n";
   */
 
-  std::ofstream out;
-  out.open("D:\\Git\\Nauchka\\tmp.txt");
-  if (out.is_open())
-  {
-    for (auto& c : graph_list)
-      if (c[0] == 1 && c[1] == 1 && c[2] == 1 && c[3] == 1 && c[4] == 1) {
-        for (int i = 0; i < 15; ++i)
-          out << (extract(c[i]) > 0 ? "+" : "")  << extract(c[i]) << ", ";
-        out << "\n";
-      }
-  }
-
   std::cout << "graph size: " << graph_list.size() << "\n";
 
-  out.close();
   Permutation rotate72({
     5, 1, 2, 3, 4,
     14, 15, 6, 7, 8, 9, 10, 11, 12, 13
