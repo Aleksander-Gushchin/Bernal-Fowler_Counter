@@ -16,6 +16,8 @@ Graph::Graph(const std::vector<bool>& vec) : bitfield(vec) {}
 
 Graph::Graph(const Graph& g) : bitfield(g.bitfield) {}
 
+Graph::Graph(Graph&& g) noexcept : bitfield(std::move(g.bitfield)) {}
+
 
 Graph& Graph::operator=(const Graph& g)
 {

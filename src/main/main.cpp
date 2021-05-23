@@ -114,7 +114,7 @@ int main() {
       group.push_back(c);
   }
 
-//#define __SHOW_GROUP
+#define __SHOW_GROUP
 #ifdef __SHOW_GROUP
   std::vector<Permutation> basis = {
       def,
@@ -136,12 +136,14 @@ int main() {
 
   std::cout << "Group size: " << group.size() << "\n";
 
-  std::vector< std::vector<Graph> > orbit;
+
+  std::vector< std::list<Graph> > orbit;
+
 
   int index_of_graph = 0;
   auto start = omp_get_wtime();
   for (auto it = graph_list.begin(); it != graph_list.end(); ++it) {
-    orbit.push_back(std::vector<Graph>(1, *it));
+    orbit.push_back(std::list<Graph>(1, *it));
     std::vector<Graph> isom_group(group.size());
     for (int i = 0; i < group.size(); ++i)
       isom_group[i] = *it * group[i];
@@ -150,7 +152,7 @@ int main() {
     for (; inner_it != graph_list.end(); ++inner_it) {
       for (auto& c : isom_group)
         if (c == *inner_it) {
-          orbit[index_of_graph].push_back(*inner_it);
+          orbit[index_of_graph].push_back(std::move(*inner_it));
           inner_it = graph_list.erase(inner_it);
           --inner_it;
           break;
@@ -185,11 +187,11 @@ int main() {
   };
 
   class InvGraph {
-    std::list<Graph*> id_list;
+    std::list<Graph> id_list;
     InvariantID id;
   public:
     InvGraph(const InvariantID& _id) : id(_id) {};
-    void add(Graph* g) { id_list.push_back(g); }
+    void moveGraph(Graph&& g) { id_list.push_back(std::move(g)); }
     int size() { return id_list.size(); }
     const InvariantID& getID() { return id; };
   };
@@ -198,15 +200,15 @@ int main() {
   invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0x3, 0x11, 0x18, 0xC, 0x6 }, 15));
   invariant_group.push_back(Invariant({ 2,2,2,2,2 }, { 0xF, 0x17, 0x1B, 0x1D, 0x1E }, 15));
   
-  std::list<std::pair<Graph*, InvariantID>> inv_split;
+  std::list<std::pair<Graph, InvariantID>> inv_split;
   
   for (auto& c : invariant_list)
-    inv_split.push_back(std::make_pair(&c, InvariantID()));
+    inv_split.push_back(std::make_pair(std::move(c), InvariantID()));
 
   start = omp_get_wtime();
   for (auto& invariant : invariant_group) {
     for (auto& cur_item : inv_split)
-      cur_item.second.add(invariant.getValue(*cur_item.first));
+      cur_item.second.add(invariant.getValue(cur_item.first));
   }
 
   std::vector<InvGraph> inv_gr;
@@ -214,12 +216,12 @@ int main() {
     bool insert = true;
     for (auto& c : inv_gr)
       if (c.getID() == cur_item.second) {
-        c.add(cur_item.first);
+        c.moveGraph(std::move(cur_item.first));
         insert = false;
       }
     if (insert == true) {
       inv_gr.push_back(cur_item.second);
-      (--inv_gr.end())->add(cur_item.first);
+      (--inv_gr.end())->moveGraph(std::move(cur_item.first));
     }
     
   }

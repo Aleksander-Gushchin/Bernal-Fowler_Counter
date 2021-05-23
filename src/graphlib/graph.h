@@ -13,6 +13,7 @@ public:
   Graph(uint32_t b_field, uint8_t size = 32);
   Graph(const std::vector<bool>& vec);
   Graph(const Graph& g);
+  Graph(Graph&& g) noexcept;
 
   Graph& operator=(const Graph& g);
   Graph& operator=(Graph&& g) noexcept;
