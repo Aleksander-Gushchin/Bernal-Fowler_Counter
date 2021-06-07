@@ -20,7 +20,6 @@ private:
 
   std::list<Monom> polynom;
 
-  
 public:
   Invariant(const std::vector<int>& cons,const std::vector<std::vector<bool> >& vec);
   Invariant(const std::vector<int>& cons, const std::vector<uint32_t>& vec, int size);

@@ -14,7 +14,6 @@ Invariant::Monom::Monom(int _c,const std::vector<bool>& vec) : cons(_c) , exp(ve
 
 Invariant::Monom::Monom(int _c, std::vector<bool>&& vec) : cons(_c), exp(move(vec))
 {
-
 }
 
 int Invariant::Monom::getValue(const Graph& g)

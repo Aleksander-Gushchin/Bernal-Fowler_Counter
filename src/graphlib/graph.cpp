@@ -18,7 +18,6 @@ Graph::Graph(const Graph& g) : bitfield(g.bitfield) {}
 
 Graph::Graph(Graph&& g) noexcept : bitfield(std::move(g.bitfield)) {}
 
-
 Graph& Graph::operator=(const Graph& g)
 {
   bitfield = g.bitfield;
@@ -85,10 +84,15 @@ const size_t Graph::getSize() const
   return bitfield.size();
 }
 
+int inline extract(int a) { return 2 * a - 1; }
+
 std::ostream& operator<<(std::ostream& os, Graph g)
 {
-  for (auto c : g.bitfield)
-    std::cout << static_cast<int>(c) << " ";
-
+  std::string tmp = "";
+  for (auto c : g.bitfield) {
+    int curr = extract(static_cast<int>(c));
+    tmp += (curr > 0 ? "+1 " : "-1 ");   
+  }
+  os << tmp;
   return os;
 }

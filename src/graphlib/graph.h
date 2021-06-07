@@ -27,5 +27,5 @@ public:
 
   const size_t getSize() const;
 
-  friend std::ostream& operator<<(std::ostream& os, Graph g);
+  friend  std::ostream& operator<<(std::ostream& os, Graph g);
 };

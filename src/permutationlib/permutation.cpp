@@ -2,7 +2,6 @@
 #include <list>
 #include <algorithm>
 #include <iostream>
-#define __TEST
 
 Permutation::Permutation()
 {
@@ -18,8 +17,8 @@ Permutation Permutation::operator*(const Permutation& p)
   std::vector<int16_t> res(perm.size());
 
   for (int i = 0; i < perm.size(); ++i) {
-    int sign = (p.perm[i] % 2 + (p.perm[i] + 1) % 2);
-    res[i] = sign * perm[std::abs(p.perm[i]) - 1];
+    int sign = (perm[i] % 2 + (perm[i] + 1) % 2);
+    res[i] = sign * p.perm[std::abs(perm[i]) - 1];
   }
   return Permutation(res);
 }
@@ -32,8 +31,8 @@ Permutation& Permutation::operator*=(const Permutation& p)
   std::vector<int16_t> res(perm.size());
 
   for (int i = 0; i < perm.size(); ++i) {
-    int sign = (p.perm[i] % 2 + (p.perm[i] + 1) % 2);
-    res[i] = sign * perm[std::abs(p.perm[i]) - 1];
+    int sign = (perm[i] % 2 + (perm[i] + 1) % 2);
+    res[i] = sign * p.perm[std::abs(perm[i]) - 1];
   }
 
   perm = res;
@@ -59,7 +58,6 @@ bool Permutation::operator==(const Permutation& p)
   return true;
 }
 
-
 int16_t & Permutation::operator[](const int32_t i)
 {
   return perm[i];
@@ -78,6 +76,6 @@ const uint32_t Permutation::get_size() const
 std::ostream& operator<<(std::ostream& os, Permutation g)
 {
   for (auto c : g.perm)
-    std::cout << c << " ";
+    os << c << " ";
   return os;
 }

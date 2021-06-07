@@ -4,13 +4,8 @@
 #include <list>
 #include <omp.h>
 
-
-int inline extract(int a) { return 2 * a - 1; }
-
-
 int main() {
-
-  std::list<Graph> graph_list;
+  std::vector<Graph> graph_list;
   int counter = 0;
 
   for (uint32_t b_i = 0; b_i < 0x7FFF + 1; ++b_i) {
@@ -34,7 +29,7 @@ int main() {
     }
   }
 
-  std::cout << "graph size: " << graph_list.size() << "\n";
+  std::cout << "Orgraph count: " << graph_list.size() << "\n";
 
   Permutation rotate72({
     5, 1, 2, 3, 4,
@@ -85,12 +80,12 @@ int main() {
       rotate72 * rotate72 * rotate72,
       rotate72 * rotate72  * rotate72  * rotate72,
       flip,
-      flip * rotate72,
-      flip * (rotate72* rotate72),
-      flip * (rotate72* rotate72* rotate72),
-      flip * (rotate72* rotate72* rotate72* rotate72)};
+      rotate72 * flip,
+      (rotate72 * rotate72) * flip,
+      (rotate72 * rotate72 * rotate72) * flip,
+      (rotate72 * rotate72 * rotate72 * rotate72) * flip};
     
-    if (i & 1 == 1)
+    if ((i & 1) == 1)
       for (auto& c : basis)
         c *= swap1;
 
@@ -114,31 +109,11 @@ int main() {
       group.push_back(c);
   }
 
-#define __SHOW_GROUP
-#ifdef __SHOW_GROUP
-  std::vector<Permutation> basis = {
-      def,
-      rotate72,
-      rotate72 * rotate72,
-      rotate72 * rotate72 * rotate72,
-      rotate72 * rotate72 * rotate72 * rotate72,
-      flip,
-      flip * rotate72,
-      flip * (rotate72 * rotate72),
-      flip * (rotate72 * rotate72 * rotate72),
-      flip * (rotate72 * rotate72 * rotate72 * rotate72) };
-  for (auto& c : basis)
-    std::cout << c << "\n";
-#endif // !__SHOW_GROUP
-
-
   auto invariant_list = graph_list;
 
-  std::cout << "Group size: " << group.size() << "\n";
-
+  std::cout << "G group size: " << group.size() << "\n";
 
   std::vector< std::list<Graph> > orbit;
-
 
   int index_of_graph = 0;
   auto start = omp_get_wtime();
@@ -161,13 +136,10 @@ int main() {
     ++index_of_graph;
   }
   auto end = omp_get_wtime();
-  std::cout << "Time: " << end - start << "\n";
-
-  for(const auto& c:orbit)
-    std::cout << "Size: " << c.size() << "\n";
+  std::cout << "Time: " << end - start << " sec\n";
 
   class InvariantID {
-  private:
+  protected:
     std::list<int> id_list;
   public:
     InvariantID() {};
@@ -175,7 +147,7 @@ int main() {
 
     void add(int val) { id_list.push_back(val); };
 
-    bool operator==(const InvariantID& inv_list) const{
+    bool operator==(const InvariantID& inv_list) const {
       auto it_left = id_list.begin();
       auto it_right = inv_list.id_list.begin();
 
@@ -184,16 +156,25 @@ int main() {
           return false;
       return true;
     };
+
+    std::string print() const {
+      std::string tmp = "";
+      char text_buff[16];
+      for (auto c : id_list) {
+        tmp += itoa(c, text_buff, 10);
+        tmp += " ";
+      }
+      return tmp;
+    };
   };
 
-  class InvGraph {
-    std::list<Graph> id_list;
-    InvariantID id;
+  class InvGraphList : public InvariantID {
+    std::list<Graph> list_graph;
   public:
-    InvGraph(const InvariantID& _id) : id(_id) {};
-    void moveGraph(Graph&& g) { id_list.push_back(std::move(g)); }
-    int size() { return id_list.size(); }
-    const InvariantID& getID() { return id; };
+    InvGraphList(const InvariantID& _id) : InvariantID(_id) {};
+    void moveGraph(Graph&& g) { list_graph.push_back(std::move(g)); }
+    int size() const { return list_graph.size(); }
+    const std::list<Graph>& getList() const { return list_graph; };
   };
 
   std::vector<Invariant> invariant_group;
@@ -206,16 +187,18 @@ int main() {
     inv_split.push_back(std::make_pair(std::move(c), InvariantID()));
 
   start = omp_get_wtime();
+  auto start1 = omp_get_wtime();
   for (auto& invariant : invariant_group) {
     for (auto& cur_item : inv_split)
       cur_item.second.add(invariant.getValue(cur_item.first));
   }
-
-  std::vector<InvGraph> inv_gr;
+  auto end1 = omp_get_wtime();
+  auto start2 = omp_get_wtime();
+  std::vector<InvGraphList> inv_gr;
   for (auto& cur_item : inv_split) {
     bool insert = true;
     for (auto& c : inv_gr)
-      if (c.getID() == cur_item.second) {
+      if (c == cur_item.second) {
         c.moveGraph(std::move(cur_item.first));
         insert = false;
       }
@@ -225,16 +208,26 @@ int main() {
     }
     
   }
+  auto end2 = omp_get_wtime();
   end = omp_get_wtime();
-  std::cout << "Time: " << end - start << "\n";
+  std::cout << "Time(Invariant): " << end - start << " sec\n";
+
+  for (const auto& c : orbit)
+    std::cout << "Orbit length: " << c.size() << "\n";
 
   for (auto& c : inv_gr)
-    std::cout << "inv size: " << c.size() << "\n";
+    std::cout << "Orbit length(Invariant): " << c.size() << "\n";
 
-  std::cout << "All graphs count: " << counter << "\n";
-  std::cout << "Non-isomorphic graphs count: " << graph_list.size() << "\n";
+  std::cout << "Nonisomorphic graph count: " << graph_list.size() << "\n";
   for (const auto& c : graph_list)
     std::cout << c << "\n";
+  std::cout << "Nonisomorphic graph count(invariant): " << inv_gr.size() << "\n";
+  for (const auto& c : inv_gr)
+    std::cout << c.getList().front() << "\n";
+
+  std::cout << "Invariant value: " << inv_gr.size() << "\n";
+  for (const auto& c : inv_gr)
+    std::cout << c.print() << "\n";
 
   return 0;
 }

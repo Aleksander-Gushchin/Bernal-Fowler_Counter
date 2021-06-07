@@ -49,7 +49,7 @@ TEST(permutation, basic_mult) {
   Permutation B(vec2);
 
   std::vector<int16_t> vec3 = {
-    3, 1, 2, 5, 4, 6, 7,
+    2, 3, 1, 5, 4, 6, 7,
     8, 9, 10, 11, 12, 13, 14, 15,
     16, 17, 18, 19, 20, 21, 22, 23,
     24, 25, 26, 27, 28, 29, 30, 31, 32};
@@ -79,7 +79,7 @@ TEST(permutation, basic_mult_eq) {
   Permutation B(vec2);
 
   std::vector<int16_t> vec3 = {
-    3, 1, 2, 5, 4, 6, 7,
+    2, 3, 1, 5, 4, 6, 7,
     8, 9, 10, 11, 12, 13, 14, 15,
     16, 17, 18, 19, 20, 21, 22, 23,
     24, 25, 26, 27, 28, 29, 30, 31, 32 };
@@ -107,7 +107,7 @@ TEST(permutation, comp_mult_1) {
   Permutation B(vec2);
 
   std::vector<int16_t> vec3 = {
-    -3, -1, -2, 5, 4, 6, 7,
+    -2, 3, 1, 5, 4, 6, 7,
     8, 9, 10, 11, 12, 13, 14, 15, 16
   };
 
@@ -183,7 +183,7 @@ TEST(permutation, rotate_and_flip) {
   Permutation flip(vec1);
   Permutation rotate(vec2);
 
-  Permutation act =  flip * (rotate * rotate);
+  Permutation act = (rotate * rotate) * flip;
   Permutation exp(vec3);
 
   bool isCorrect = exp == act;

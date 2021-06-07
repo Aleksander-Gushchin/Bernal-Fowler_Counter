@@ -22,6 +22,5 @@ public:
 
   const uint32_t get_size() const;
 
-
   friend std::ostream& operator<<(std::ostream& os, Permutation g);
 };
